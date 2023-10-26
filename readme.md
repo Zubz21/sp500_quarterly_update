@@ -1,80 +1,76 @@
-# Capstone Project
+# S&P 500 Predictive Analysis
 
-Your Capstone project is the culmination of your time at GA. You will be tasked with developing an interesting question, collecting the data required to model that data, developing the strongest model (or models) for prediction, and communicating those findings to other data scientists and non-technical individuals. This introductory document lays out the five check-ins for the project and their due dates.
 
-## Your Deliverables
+## Introduction:
+---
+The S&P 500 is one of the most widely followed equity indices in the world, reflecting the performance of 500 large companies listed on U.S. stock exchanges. Companies are periodically added and removed. This project aims to predict potential changes based on financial indicators.
 
-- A well-made predictive model using either structured or unstructured machine learning techniques (or other technique approved in advanced by the instructors), as well as clean, well-written code.
-- A technical report aimed at fellow data scientists that explains your process and findings.
-- A public presentation of your findings aimed primarily at laypeople.
+## Problem Statement:
+---
+Predict which companies will be in the S&P 500
 
-### **[Capstone, Part 1: Topic Ideas](./part_01/)**
+## Data Collection:
+---
+We will be sourcing our data from Alpha Vantage, focusing on:
 
-Get started by choosing **three potential topics**.  might be a domain you are familiar with, a particular interest you have, something that affects a community you are involved in, or an area that relates to a field you wish to work in.
+* 1000 stocks
+* Quarterly earnings (net income) for the last 8 quarters.
+* Monthly trading volume for the past 12 months.
+* Market Capitalization.
+* Time since the oldest data (an approximation for time since IPO or listing).
+* Market Sentiment (NLP Piece)
 
-One of the best ways to get feedback on your ideas quickly is to share them with others. That's why for Part 1 of your Capstone project, you'll share three potential topics.
+## Models and Approach:
+---
+1. Predicting the Next 3 Monthly Trading Volumes:
+    a. Data Preparation:
 
-**The ultimate choice of topic for your capstone project is yours!** However, this is research and development work. Sometimes projects that look easy can be difficult and vice versa. It never hurts to have a second (or third) option available. Not sure where to start? Need some inspiration? Check out some past student capstone projects at the bottom of this README: [CLICK HERE](#example-projects)
+        *Arrange the trading volumes of each stock as sequences of the last 24 periods.
+        *The target variable would be sequences of the next 3 periods.
+        *Each row in the dataset will look something like: [v1, v2, ..., v24] -> [v25, v26, v27].
 
-- **Goal**: Share three potential topics and/or potential sources of data.
-- **Due**: See Google Classroom.
+    b. Model Selection:
 
-<!--
-### **Capstone, Part 1.5:**
+        *For this problem, neural networks or regression-based models can work effectively.
+        *LSTM can also be used, given its ability to remember sequences.
+        *Another approach is to treat each future month as a separate regression problem. That is, predict v25 based on [v1, v2, ..., v24], then v26, and so on.
 
-In [this Google Sheet](https://docs.google.com/spreadsheets/d/1OShtZSiaWIzLOJVVRs8yEkHNLqvNa4Sps4Jj7D5OQaM/edit?usp=sharing) share your **one-sentence** problem statement **and** whether you have your dataset in hand.
-- **Due**: See Google Classroom.
--->
+    c. Model Evaluation:
 
-### **[Capstone, Part 2: Problem Statement + EDA](./part_02/)**
+        *Metrics like MAE, RMSE to evaluate the regression performance.
+        
+2. Predicting the Next Quarterly Net Income:
+    a. Data Preparation:
 
-For Part 2, provide a clear statement of the problem that you have chosen and an overview of your approach to solving that problem. Summarize your objectives, goals & success metrics, and any risks & assumptions. Outline your proposed methods and models, perform your initial EDA, and summarize the process. **Your data should be in hand by this point in the process!**
+        * Arrange the net incomes of each stock as sequences of the last 8 quarters.
+        * The target variable would be the value of the next quarter.
+        * Each row in the dataset will look something like: [q1, q2, ..., q8] -> q9.
 
-**Again, your data should be in hand by now!**
+    b. Model Selection:
+    
+        * Similar to the trading volumes, we can use regression models or neural networks.
+        * Since it's just one future value, simple regression models like Random Forests, Gradient Boosted Trees, or linear regression can be effective.
+    c. Model Evaluation:
 
-- **Goal**: Describe your proposed approach and summarize your initial EDA in a document you push to your GitHub repo.
-- **Due**: See Google Classroom.
+        * Metrics like MAE, RMSE to evaluate the regression performance.      
 
-### **[Capstone, Part 3: Progress Report + Preliminary Findings](./part_03/)**
+3. Classification Based on Predicted Values:
+Once wehave the predicted values:
 
-In Part 3, you'll create a progress report of your work to get feedback along the way. Describe your approach, initial results, and any setbacks or lessons learned so far. Your report should include updated visual and statistical analysis of your data. You’ll also meet with your instructional team to get feedback on your results so far!
+    a. Data Preparation:
 
-- **Goal**: Discuss progress and setbacks, include visual and statistical analysis, in your GitHub repo.
-- **Due**: See Google Classroom.
+        * Integrate the predicted values with our existing features.
+        * Label the current S&P 500 stocks as '1' and the rest as '0'.
+        
+    b. Model Selection & Evaluation:
 
-### **[Capstone, Part 4: Report Writeup + Technical Analysis](./part_04/)**
+        * Follow the steps mentioned in the previous response to classify stocks as potential inclusions or exclusions from the S&P 500.
 
-Your goal for Part 4 is to develop a technical document (in the form of Jupyter notebook) that could be shared with your peers.
+## Hypotheses to Test:
+---
+* Companies with declining quarterly earnings over consecutive quarters are more likely to be delisted.
+* Younger companies (based on our approximation of time since listing) are less likely to be added unless they have significant market capitalization or trading volumes.
+* A company's market capitalization and trading volume relative to others might be strong indicators of its likelihood to be added or removed.
 
-Document your research and analysis including a summary, an explanation of your modeling approach as well as the strengths and weaknesses of any variables in the process. You should provide insight into your analysis, using best practices like cross validation or applicable prediction metrics.
+By the end of this project, we aim to provide an insightful analysis that can serve as a guiding tool for investors and market enthusiasts to anticipate the future composition of the S&P 500.
 
-- **Goal**: Detailed report and code with a summary of your statistical analysis, model, and evaluation metrics.
-- **Due**: See Google Classroom.
-
-### **[Capstone, Part 5: Presentation + Recommendations](./part_05/)**
-
-Whether during an interview or as part of a job, you will frequently have to present your findings to business partners and other interested parties - many of whom won't know anything about data science! That's why for Part 5, you'll create a presentation of your previous findings with a semi-technical audience in mind.
-
-You should already have the analytical work complete, so now it's time to clean up and clarify your findings. Create a slide deck that explains your data, visualizes your model, describes your approach, articulates strengths and weaknesses, and presents specific recommendations. Be prepared to explain and defend your model to an inquisitive audience! An interactive app is a great addition to your project.
-
-- **Goal**: Detailed presentation deck that relates your data, model, and findings to a non-technical audience.
-- **Due**: See Google Classroom.
-
-<a name="example-projects"></a>
-### Example Projects
-
-Below are some great capstone projects submitted by past DSI students!
-
-* [Kenya Chauche, DSI-10](https://github.com/KenyaChauche/sonnet-generation) built a natural language generation program trained on Shakespeare's sonnets
-* [Molly Baird, DSI-11](https://github.com/mollycbaird/ComputerVisionSET) wanted to computerize the game of SET, and succeeded admirably
-* [Daniel Johnston, DSI-2](https://github.com/djkjohnston/ML_from_scratch_GA_DSI_Capstone) built several key machine learning algos from scratch in python, comparing their performance to the scikit-learn implementations.  
-* [Alex Schultz, DSI-3](https://github.com/fullquartpress/DSI-Capstone) predicts spot coffee (commodity coffee bean) price changes from sentiment analysis of an industry trade publication.  
-* [Brice Walker, DSI-3](https://github.com/bricewalker/Hey-Jetson) wanted to play with his Jetson GPU and built voice transcription _from scratch_.  
-* [Caitlin Streamer, DSI-4](https://github.com/c-streams/Pneumonia) worked on a Kaggle dataset to predict pneumonia from chest X-rays.  
-* [Brian Osgood, DSI-04](https://github.com/osgoodbl/PyFilter) built a bot that crawls twitter and identifies whether an image tagged 'lamborghini' is actually a lamborghini.  
-* [Frank Turner, DSI-04](https://github.com/frankturnerv/Fashioning_Models_from_Fashion_Models) uses image recognition to identify the colors used in a fashion season's palette.  
-* [DSI-06, team](https://github.com/balak4/Optimizing-Evac-Routes) This is actually the DSI-6 group project. It's here because it's really, really impressive.  
-* [Amy Taylor, DSI-06](https://github.com/amytaylor330/CNN_for_Dance_Music_Classification_repost) wanted to quantify the difference between types of dance music.  
-* [Veronica Giannotta, DSI-06](https://github.com/vgiannotta/Emotional-Impacts-of-Viral-Content) delved into the dark side of the internet and evaluated the emotional sentiment of social media content that goes viral.
-* [Derek Steffan, DSI-07](https://github.com/dsteffan/twitch_chat_analysis) automates the process of creating twitch highlight reels using sentiment analysis, markov chains, and Bayesian analysis.  
-* [Sebastian Alvis, League of Legends](https://github.com/salvis2/SpringboardAlvis/tree/master/capstone_project_1) Not a GA capstone, but a very compelling case for applying data science to your interests to come up with a good capstone.

@@ -7,7 +7,7 @@ The S&P 500 is one of the most widely followed equity indices in the world, refl
 
 ## Problem Statement:
 ---
-To predict which companies might be at risk of being delisted from the S&P 500 and suggest potential replacements using financial indicators and data analysis techniques.
+Predict which companies will be in the S&P 500
 
 ## Data Collection:
 ---
@@ -22,10 +22,49 @@ We will be sourcing our data from Alpha Vantage, focusing on:
 
 ## Models and Approach:
 ---
-* Exploratory Data Analysis (EDA): We'll first analyze the distribution of our key metrics among current S&P 500 companies and those outside it.
-* Feature Engineering: Construct composite metrics like average earnings growth over quarters, average trading volume, etc.
-* Modeling: Given this is a classification problem (whether a company will be added or removed), we'll start with logistic regression and then explore tree-based models.
-* Validation: Use historical changes in S&P 500 as our validation set.
+1. Predicting the Next 3 Monthly Trading Volumes:
+    a. Data Preparation:
+
+        *Arrange the trading volumes of each stock as sequences of the last 24 periods.
+        *The target variable would be sequences of the next 3 periods.
+        *Each row in the dataset will look something like: [v1, v2, ..., v24] -> [v25, v26, v27].
+
+    b. Model Selection:
+
+        *For this problem, neural networks or regression-based models can work effectively.
+        *LSTM can also be used, given its ability to remember sequences.
+        *Another approach is to treat each future month as a separate regression problem. That is, predict v25 based on [v1, v2, ..., v24], then v26, and so on.
+
+    c. Model Evaluation:
+
+        *Metrics like MAE, RMSE to evaluate the regression performance.
+        
+2. Predicting the Next Quarterly Net Income:
+    a. Data Preparation:
+
+        * Arrange the net incomes of each stock as sequences of the last 8 quarters.
+        * The target variable would be the value of the next quarter.
+        * Each row in the dataset will look something like: [q1, q2, ..., q8] -> q9.
+
+    b. Model Selection:
+    
+        * Similar to the trading volumes, we can use regression models or neural networks.
+        * Since it's just one future value, simple regression models like Random Forests, Gradient Boosted Trees, or linear regression can be effective.
+    c. Model Evaluation:
+
+        * Metrics like MAE, RMSE to evaluate the regression performance.      
+
+3. Classification Based on Predicted Values:
+Once wehave the predicted values:
+
+    a. Data Preparation:
+
+        * Integrate the predicted values with our existing features.
+        * Label the current S&P 500 stocks as '1' and the rest as '0'.
+        
+    b. Model Selection & Evaluation:
+
+        * Follow the steps mentioned in the previous response to classify stocks as potential inclusions or exclusions from the S&P 500.
 
 ## Hypotheses to Test:
 ---
